@@ -7,6 +7,8 @@ and compile the C example
 
 `make run` will run both the C and Perl examples.
 
+`make bench` will run benchmarks and measure runtime performance.
+
 For the Perl example Inline::C module is needed
 
 Still WIP
