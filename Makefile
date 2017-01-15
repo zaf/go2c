@@ -6,11 +6,11 @@
 all: go2c example
 
 go2c: go2c.go
-		go build -buildmode=c-archive $^
+	go build -buildmode=c-archive $^
 
 example: example.c
 	cc -g -Wall -pthread $^ go2c.a -o $@
 
 clean:
 	go clean
-	rm -f go2c.a  go2c.h example
+	rm -f go2c.a go2c.h example

@@ -1,6 +1,9 @@
 /*
 	Example of interfacing between Go and C programs.
 	Copyright (C) 2017, Lefteris Zafiris <zaf@fastmail.com>
+
+	This program is free software, distributed under the terms of the MIT License.
+	See the LICENSE file at the top of the source tree.
 */
 
 #include "stdio.h"
