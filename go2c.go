@@ -19,6 +19,8 @@ import (
 	"strconv"
 )
 
+// All exported functions must have a '//export [name]' comment.
+
 //export Add
 func Add(x, y int) int {
 	return x + y
@@ -44,4 +46,5 @@ func ConCat(x, y *C.char) *C.char {
 	return C.CString(C.GoString(x) + C.GoString(y))
 }
 
+// A main function must be present, even if empty.
 func main() {}

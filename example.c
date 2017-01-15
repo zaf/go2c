@@ -17,7 +17,7 @@ int main() {
 	printf("Running Add(%d, %d) returned: %d\n", x, y, Add(x,y));
 	printf("Running Square(%d) returned: %d\n", x, Square(x));
 	printf("Running PrintBits(%d): ", x);
-	PrintBits(x);  //Oops.. Threads!
+	PrintBits(x);  // Might be printed out of order. Oops.. Go actually uses threads!
 	printf("Oops... Threads!\n");
 
 	printf("Running ToBits(%d) returned: %s\n", x, ToBits(x));
