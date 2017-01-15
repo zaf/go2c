@@ -10,12 +10,12 @@
 #include "go2c.h"
 
 int main() {
-	printf("Calling Go functions from C:\n\n");
+	printf("\nCalling Go functions from C:\n");
 	// Ints
 	int x = 10;
 	int y = 5;
-	printf("Running Add(%d, %d) returned: %d\n", x, y, Add(x,y));
-	printf("Running Square(%d) returned: %d\n", x, Square(x));
+	printf("Running Add(%d, %d) returned: %lld\n", x, y, Add(x,y));
+	printf("Running Square(%d) returned: %lld\n", x, Square((GoInt) x));  // We can cast to Go Types
 	printf("Running PrintBits(%d): ", x);
 	PrintBits(x);  // Might be printed out of order. Oops.. Go actually uses threads!
 	printf("Oops... Threads!\n");
