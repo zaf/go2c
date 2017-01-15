@@ -58,7 +58,7 @@ extern "C" {
 #endif
 
 
-extern GoInt Add(GoInt p0, GoInt p1);
+extern int Add(int p0, int p1);
 
 extern GoInt Square(GoInt p0);
 

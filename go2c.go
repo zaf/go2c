@@ -22,27 +22,27 @@ import (
 // All exported functions must have a '//export [name]' comment.
 
 //export Add
-func Add(x, y int) int { // This fuction when used in C takes as input GoInt and retuens GoInt
+func Add(x, y C.int) C.int { // This function when used in C takes as input int and returns int
 	return x + y
 }
 
 //export Square
-func Square(x int) int { // This fuction when used in C takes as input GoInt and retuens GoInt
+func Square(x int) int { // This function when used in C takes as input GoInt and returns GoInt
 	return x * x
 }
 
 //export PrintBits
-func PrintBits(x C.int) { // This fuction when used in C takes as input int and retuens void
+func PrintBits(x C.int) { // This function when used in C takes as input int and returns void
 	fmt.Println(strconv.FormatInt(int64(x), 2))
 }
 
 //export ToBits
-func ToBits(x C.int) *C.char { // This fuction when used in C takes as input int and retuens char*
+func ToBits(x C.int) *C.char { // This function when used in C takes as input int and returns char*
 	return C.CString(fmt.Sprintf(strconv.FormatInt(int64(x), 2)))
 }
 
 //export ConCat
-func ConCat(x, y *C.char) *C.char { // This fuction when used in C takes as input char* and retuens char*
+func ConCat(x, y *C.char) *C.char { // This function when used in C takes as input char* and returns char*
 	return C.CString(C.GoString(x) + C.GoString(y))
 }
 
