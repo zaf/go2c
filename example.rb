@@ -9,56 +9,52 @@
 #
 
 require 'fiddle'
+require 'fiddle/import'
 
-go2c = Fiddle.dlopen('./go2c.so')
+module Go
+	extend Fiddle::Importer
+	dlload './go2c.so'
 
-Add = Fiddle::Function.new(
-	go2c['Add'],
-	[Fiddle::TYPE_INT, Fiddle::TYPE_INT],
-	Fiddle::TYPE_INT
-)
+	typealias "GoInt", "int"
 
-Square = Fiddle::Function.new(
-	go2c['Square'],
-	[Fiddle::TYPE_INT],
-	Fiddle::TYPE_INT
-)
+	GoString = struct [
+		'char * p',
+		'int n'
+	]
 
-PrintBits = Fiddle::Function.new(
-	go2c['PrintBits'],
-	[Fiddle::TYPE_INT],
-	Fiddle::TYPE_VOID
-)
-
-ToBits = Fiddle::Function.new(
-	go2c['ToBits'],
-	[Fiddle::TYPE_VOIDP],
-	Fiddle::TYPE_VOIDP
-)
-
-ConCat = Fiddle::Function.new(
-	go2c['ConCat'],
-	[Fiddle::TYPE_VOIDP, Fiddle::TYPE_VOIDP],
-	Fiddle::TYPE_VOIDP
-)
+	extern 'int Add(int, int)'
+	extern 'GoInt Square(GoInt)'
+	extern 'void PrintBits(int)'
+	extern 'char* ToBits(int)'
+	extern 'char* ConCat(char*, char*)'
+	extern 'char* ToUpper(struct GoString*)'
+end
 
 print "\nCalling Go functions from Ruby:\n"
 
 x = 10
 y = 5
-z = Add.call(x, y)
+z = Go.Add(x, y)
 puts "Running Add(#{x}, #{y}) returned: #{z}"
 
-s = Square.call(x)
+s = Go.Square(x)
 puts "Running Square(#{x}) returned: #{s}"
 
 print "Running PrintBits(#{x}): "
-PrintBits.call(x) # Might be printed out of order. Oops.. Go actually uses threads!
+Go.PrintBits(x) # Might be printed out of order. Oops.. Go actually uses threads!
 
-bits = ToBits.call(x)
+bits = Go.ToBits(x)
 puts "Running ToBits(#{x}) returned: #{bits}"
 
 a = "Hello "
 b = "world!"
-c = ConCat.call(a, b)
+c = Go.ConCat(a, b)
 puts "Running ConCat(#{a}, #{b}) returned: #{c}"
+
+#str = Go::GoString.malloc
+#str.p.malloc(a.length)
+#str.p = a
+#str.n = a.length
+
+#upper = Go.ToUpper(str)
+#puts "Running ToUpper(#{str.p}) returned: #{upper}"
