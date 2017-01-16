@@ -23,6 +23,7 @@ use Inline (C => Config =>
 
 use Inline C => <<'END_OF_C_CODE';
 	#include <stdlib.h>
+	#include <string.h>
 
 // Exported Go Functions
 	extern int Add(int p0, int p1);
@@ -35,7 +36,7 @@ use Inline C => <<'END_OF_C_CODE';
 	const char* CConCat(char *a, char *b) {
 		char *str = malloc (sizeof (char) * 256);
 		strcpy(str, a);
-		strcpy(str, b);
+		strcat(str, b);
 		return str;
 	}
 
@@ -59,50 +60,62 @@ my $x = 10;
 my $y = 5;
 my $a = "Hello ";
 my $b = "world!";
+my $r;
 
 # Testing Add functions
 print "Running Add() $runs times:\n";
 my $t0 = Benchmark->new;
 for (1..$runs) {
-	Go::Add($x, $y);
+	$r = Go::Add($x, $y);
 }
 my $t1 = Benchmark->new;
-print "Go took:\t", timestr(timediff($t1, $t0)), "\n";
+print "Go took:\t", timestr(timediff($t1, $t0));
+print " result: $r\n";
+$r = '';
 
 $t0 = Benchmark->new;
 for (1..$runs) {
-	Go::CAdd($x, $y);
+	$r = Go::CAdd($x, $y);
 }
 $t1 = Benchmark->new;
-print "C  took:\t", timestr(timediff($t1, $t0)), "\n";
+print "C  took:\t", timestr(timediff($t1, $t0));
+print " result: $r\n";
+$r = '';
 
 $t0 = Benchmark->new;
 for (1..$runs) {
-	add($x, $y);
+	$r = add($x, $y);
 }
 $t1 = Benchmark->new;
-print "Perl took:\t", timestr(timediff($t1, $t0)), "\n\n";
-
+print "Perl took:\t", timestr(timediff($t1, $t0));
+print " result: $r\n";
+$r = '';
 
 # Testing concat functions
 print "Running ConCat() $runs times:\n";
 $t0 = Benchmark->new;
 for (1..$runs) {
-	Go::ConCat($a, $b);
+	$r = Go::ConCat($a, $b);
 }
 $t1 = Benchmark->new;
-print "Go took:\t", timestr(timediff($t1, $t0)), "\n";
+print "Go took:\t", timestr(timediff($t1, $t0));
+print " result: $r\n";
+$r = '';
 
 $t0 = Benchmark->new;
 for (1..$runs) {
-	Go::CConCat($a, $b);
+	$r = Go::CConCat($a, $b);
 }
 $t1 = Benchmark->new;
-print "C  took:\t", timestr(timediff($t1, $t0)), "\n";
+print "C  took:\t", timestr(timediff($t1, $t0));
+print " result: $r\n";
+$r = '';
 
 $t0 = Benchmark->new;
 for (1..$runs) {
-	concat($a, $b);
+	$r = concat($a, $b);
 }
 $t1 = Benchmark->new;
-print "Perl took:\t", timestr(timediff($t1, $t0)), "\n\n";
+print "Perl took:\t", timestr(timediff($t1, $t0));
+print " result: $r\n";
+$r = '';

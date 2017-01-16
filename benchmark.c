@@ -26,50 +26,53 @@ int CAdd( int x, int y) {
 	return x + y;
 }
 
-const char* CConCat(char *a, char *b) {
+char* CConCat(char *a, char *b) {
 	char *str = malloc (sizeof (char) * 256);
 	strcpy(str, a);
-	strcpy(str, b);
+	strcat(str, b);
 	return str;
 }
 
 int main() {
 	int x = 10;
 	int y = 5;
-	int i;
+	int i, r;
 	int runs = 2000000;
 
 	printf("Running Add() %d times:\n", runs);
 	double t0 = get_time();
 	for (i=0; i<runs; i++) {
-		Add(x,y);
+		r = Add(x,y);
 	}
 	double t1 = get_time();
-	printf("Go took:\t%f\n", t1-t0);
+	printf("Go took:\t%f sec, result: %d\n", t1-t0, r);
 
 	t0 = get_time();
 	for (i=0; i<runs; i++) {
-		CAdd(x,y);
+		r = CAdd(x,y);
 	}
 	t1 = get_time();
-	printf("C took: \t%f\n", t1-t0);
+	printf("C took: \t%f sec, result: %d\n", t1-t0, r);
 
 	char *a = "Hello ";
 	char *b = "world!";
+	char *c;
 	printf("Running ConCat() %d times:\n", runs);
 	t0 = get_time();
 	for (i=0; i<runs; i++) {
-		ConCat(a,b);
+		 c = ConCat(a,b);
 	}
 	t1 = get_time();
-	printf("Go took:\t%f\n", t1-t0);
+	printf("Go took:\t%f sec, result: %s\n", t1-t0, c);
+	free(c);
 
 	t0 = get_time();
 	for (i=0; i<runs; i++) {
-		CConCat(a,b);
+		c = CConCat(a,b);
 	}
 	t1 = get_time();
-	printf("C took: \t%f\n", t1-t0);
+	printf("C took: \t%f sec, result: %s\n", t1-t0, c);
+	free(c);
 
 	return 0;
 }
