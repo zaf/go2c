@@ -26,6 +26,8 @@ run: all
 	./example
 	@echo "=== Running the Perl example code ==="
 	perl example.pl
+	@echo "=== Running the Ruby example code ==="
+	ruby example.rb
 
 bench: all
 	@echo "=== Running the C benchmark ==="
