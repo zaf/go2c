@@ -10,11 +10,17 @@
 
 require 'fiddle'
 
-go2c = Fiddle.dlopen('/home/zaf/src/go2c/go2c.so') # Change me!
+go2c = Fiddle.dlopen('./go2c.so')
 
 Add = Fiddle::Function.new(
 	go2c['Add'],
 	[Fiddle::TYPE_INT, Fiddle::TYPE_INT],
+	Fiddle::TYPE_INT
+)
+
+Square = Fiddle::Function.new(
+	go2c['Square'],
+	[Fiddle::TYPE_INT],
 	Fiddle::TYPE_INT
 )
 
@@ -41,8 +47,10 @@ print "\nCalling Go functions from Ruby:\n"
 x = 10
 y = 5
 z = Add.call(x, y)
-
 puts "Running Add(#{x}, #{y}) returned: #{z}"
+
+s = Square.call(x)
+puts "Running Square(#{x}) returned: #{s}"
 
 print "Running PrintBits(#{x}): "
 PrintBits.call(x) # Might be printed out of order. Oops.. Go actually uses threads!
