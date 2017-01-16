@@ -16,18 +16,16 @@ module Go
 	dlload './go2c.so'
 
 	typealias "GoInt", "int"
+	typealias "GoString", "struct { const char *; GoInt; }"
 
-	GoString = struct [
-		'char * p',
-		'int n'
-	]
+	GoString = struct ['const char * p', 'GoInt n']
 
 	extern 'int Add(int, int)'
 	extern 'GoInt Square(GoInt)'
 	extern 'void PrintBits(int)'
 	extern 'char* ToBits(int)'
 	extern 'char* ConCat(char*, char*)'
-	extern 'char* ToUpper(struct GoString*)'
+	extern 'char* ToUpper(GoString)'
 end
 
 print "\nCalling Go functions from Ruby:\n"
@@ -51,10 +49,9 @@ b = "world!"
 c = Go.ConCat(a, b)
 puts "Running ConCat(#{a}, #{b}) returned: #{c}"
 
-#str = Go::GoString.malloc
-#str.p.malloc(a.length)
-#str.p = a
-#str.n = a.length
+str = Go::GoString.malloc
+str.p = b
+str.n = b.length
 
-#upper = Go.ToUpper(str)
-#puts "Running ToUpper(#{str.p}) returned: #{upper}"
+upper = Go.ToUpper(str)
+puts "Running ToUpper(#{str.p}) returned: #{upper}"
