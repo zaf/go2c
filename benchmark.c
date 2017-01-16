@@ -13,6 +13,8 @@
 #include <sys/resource.h>
 #include "go2c.h"
 
+#define RUNS 2000000
+
 // Hi-Res timer
 double get_time() {
     struct timeval t;
@@ -22,56 +24,76 @@ double get_time() {
 }
 
 // Native C functions
-int CAdd( int x, int y) {
+int CAdd(int x, int y) {
 	return x + y;
 }
 
-char* CConCat(char *a, char *b) {
-	char *str = malloc (sizeof (char) * 256);
-	strcpy(str, a);
-	strcat(str, b);
-	return str;
+char * CConCat(const char *a, const char *b) {
+    char *str = NULL;
+    size_t n = 0;
+
+    if ( a ) {
+		n += strlen(a);
+	}
+    if ( b ) {
+		n += strlen(b);
+	}
+    if ( ( a || b ) && ( str = malloc( n + 1 ) ) != NULL ) {
+        *str = '\0';
+        if ( a ) {
+			strcpy(str, a);
+		}
+        if ( b ) {
+			strcat(str, b);
+		}
+    }
+    return str;
 }
 
 int main() {
+	double start, end;
+
+	printf("Running Add() %d times:\n", RUNS);
 	int x = 10;
 	int y = 5;
-	int i, r;
-	int runs = 2000000;
+	int i, sum;
 
-	printf("Running Add() %d times:\n", runs);
-	double t0 = get_time();
-	for (i=0; i<runs; i++) {
-		r = Add(x,y);
+	start = get_time();
+	for (i=0; i<RUNS; i++) {
+		sum = Add(x,y);
 	}
-	double t1 = get_time();
-	printf("Go took:\t%f sec, result: %d\n", t1-t0, r);
+	end = get_time();
+	printf("Go took:\t%f sec, result: %d\n", end-start, sum);
 
-	t0 = get_time();
-	for (i=0; i<runs; i++) {
-		r = CAdd(x,y);
+	start = get_time();
+	for (i=0; i<RUNS; i++) {
+		sum = CAdd(x,y);
 	}
-	t1 = get_time();
-	printf("C took: \t%f sec, result: %d\n", t1-t0, r);
+	end = get_time();
+	printf("C took: \t%f sec, result: %d\n", end-start, sum);
 
+	printf("Running ConCat() %d times:\n", RUNS);
 	char *a = "Hello ";
 	char *b = "world!";
-	char *c;
-	printf("Running ConCat() %d times:\n", runs);
-	t0 = get_time();
-	for (i=0; i<runs; i++) {
-		 c = ConCat(a,b);
-	}
-	t1 = get_time();
-	printf("Go took:\t%f sec, result: %s\n", t1-t0, c);
-	free(c);
+	char *c = NULL;
 
-	t0 = get_time();
-	for (i=0; i<runs; i++) {
+	start = get_time();
+	for (i=0; i<RUNS; i++) {
+		if (c) free(c);
+		c = ConCat(a,b);
+	}
+	end = get_time();
+	printf("Go took:\t%f sec, result: %s\n", end-start, c);
+	free(c);
+	c = NULL;
+
+	start = get_time();
+	for (i=0; i<RUNS; i++) {
+		if (c) free(c);
 		c = CConCat(a,b);
 	}
-	t1 = get_time();
-	printf("C took: \t%f sec, result: %s\n", t1-t0, c);
+	end = get_time();
+	printf("C took: \t%f sec, result: %s\n", end-start, c);
 	free(c);
 
 	return 0;

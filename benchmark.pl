@@ -16,30 +16,46 @@ package Go;
 
 use Inline (C => Config =>
     enable       => "autowrap",
-    ccflagsex    => '-pthread',
+    ccflagsex    => '-Wall -g -pthread',
+    #optimize     => '-march=native -O3',
     auto_include => '#include "go2c.h"',
     myextlib     => '/home/zaf/src/go2c/go2c.so', # Change me!!
 );
 
 use Inline C => <<'END_OF_C_CODE';
-	#include <stdlib.h>
-	#include <string.h>
+#include <stdlib.h>
+#include <string.h>
 
 // Exported Go Functions
-	extern int Add(int p0, int p1);
-	extern char* ConCat(char* p0, char* p1);
+extern int Add(int p0, int p1);
+extern char* ConCat(char* p0, char* p1);
 
 // Native C functions
-	int CAdd( int x, int y) {
-		return x + y;
-	}
-	const char* CConCat(char *a, char *b) {
-		char *str = malloc (sizeof (char) * 256);
-		strcpy(str, a);
-		strcat(str, b);
-		return str;
-	}
+int CAdd( int x, int y) {
+	return x + y;
+}
 
+char * CConCat(const char *a, const char *b) {
+    char *str = NULL;
+    size_t n = 0;
+
+    if ( a ) {
+		n += strlen(a);
+	}
+    if ( b ) {
+		n += strlen(b);
+	}
+    if ( ( a || b ) && ( str = malloc( n + 1 ) ) != NULL ) {
+        *str = '\0';
+        if ( a ) {
+			strcpy(str, a);
+		}
+        if ( b ) {
+			strcat(str, b);
+		}
+    }
+    return str;
+}
 END_OF_C_CODE
 
 package main;

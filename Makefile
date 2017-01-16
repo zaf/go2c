@@ -37,3 +37,5 @@ clean:
 	go clean
 	rm -f go2c.a go2c.so go2c.h example benchmark
 	rm -rf _Inline
+
+.PHONY: clean bench run

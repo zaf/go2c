@@ -7,7 +7,7 @@
 
 #line 11 "/home/zaf/src/go2c/go2c.go"
 
-// Example for interfacing between Go and C programs.
+// Example of interfacing between Go and C programs.
 
 #line 1 "cgo-generated-wrapper"
 
@@ -67,6 +67,12 @@ extern void PrintBits(int p0);
 extern char* ToBits(int p0);
 
 extern char* ConCat(char* p0, char* p1);
+
+extern char* ToUpper(GoString p0);
+
+extern GoString ToUpper2(GoString p0);
+
+extern void* ToUpper3(GoString p0);
 
 #ifdef __cplusplus
 }

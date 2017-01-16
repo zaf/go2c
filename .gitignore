@@ -1,0 +1,5 @@
+*.so
+*.a
+example
+benchmark
+_Inline/
