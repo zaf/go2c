@@ -14,11 +14,11 @@ go2c.so: go2c.go
 	go build -buildmode=c-shared -o $@ $^
 
 # Build C example
-example: example.c
+example: example.c go2c.a
 	cc -g -Wall -pthread -o $@ $^ go2c.a
 
 # Build C benchmark
-benchmark: benchmark.c
+benchmark: benchmark.c go2c.a
 	cc -g -Wall -pthread -o $@ $^ go2c.a
 
 run: all

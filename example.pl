@@ -21,11 +21,11 @@ use Inline (C => Config =>
 );
 
 use Inline C => <<'END_OF_C_CODE';
-	extern int Add(int p0, int p1);
-//	extern GoInt Square(GoInt p0);  // Missing typemap for GoInt
-	extern void PrintBits(int p0);
-	extern char* ToBits(int p0);
-	extern char* ConCat(char* p0, char* p1);
+	extern int add(int p0, int p1);
+//	extern GoInt square(GoInt p0);  // Missing typemap for GoInt
+	extern void printBits(int p0);
+	extern char* toBits(int p0);
+	extern char* conCat(char* p0, char* p1);
 END_OF_C_CODE
 
 package main;
@@ -33,14 +33,14 @@ package main;
 print "\nCalling Go functions from Perl:\n";
 
 my ($x, $y) = (10, 5);
-print "Running Add($x, $y) returned: ", Go::Add($x, $y), "\n";
-#print "Running Square($x) returned: ", Go::Square($x), "\n";
-print "Running PrintBits($x): ";
-Go::PrintBits($x); # Might be printed out of order. Oops.. Go actually uses threads!
+print "Running add($x, $y) returned: ", Go::add($x, $y), "\n";
+#print "Running square($x) returned: ", Go::square($x), "\n";
+print "Running printBits($x): ";
+Go::printBits($x); # Might be printed out of order. Oops.. Go actually uses threads!
 print "Oops... Threads!\n";
 
-print "Running ToBits($x) returned: ", Go::ToBits($x), "\n";
+print "Running toBits($x) returned: ", Go::toBits($x), "\n";
 
 my $a = "Hello ";
 my $b = "world!";
-print "Running ConCat($a, $b) returned: ", Go::ConCat($a,$b), "\n";
+print "Running conCat($a, $b) returned: ", Go::conCat($a,$b), "\n";

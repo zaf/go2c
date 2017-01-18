@@ -24,11 +24,11 @@ double get_time() {
 }
 
 // Native C functions
-int CAdd(int x, int y) {
+int cAdd(int x, int y) {
 	return x + y;
 }
 
-char * CConCat(const char *a, const char *b) {
+char * cConCat(const char *a, const char *b) {
     char *str = NULL;
     size_t n = 0;
 
@@ -53,26 +53,26 @@ char * CConCat(const char *a, const char *b) {
 int main() {
 	double start, end;
 
-	printf("Running Add() %d times:\n", RUNS);
+	printf("Running add() %d times:\n", RUNS);
 	int x = 10;
 	int y = 5;
 	int i, sum;
 
 	start = get_time();
 	for (i=0; i<RUNS; i++) {
-		sum = Add(x,y);
+		sum = add(x,y);
 	}
 	end = get_time();
 	printf("Go took:\t%f sec, result: %d\n", end-start, sum);
 
 	start = get_time();
 	for (i=0; i<RUNS; i++) {
-		sum = CAdd(x,y);
+		sum = cAdd(x,y);
 	}
 	end = get_time();
 	printf("C took: \t%f sec, result: %d\n", end-start, sum);
 
-	printf("Running ConCat() %d times:\n", RUNS);
+	printf("Running conCat() %d times:\n", RUNS);
 	char *a = "Hello ";
 	char *b = "world!";
 	char *c = NULL;
@@ -80,7 +80,7 @@ int main() {
 	start = get_time();
 	for (i=0; i<RUNS; i++) {
 		if (c) free(c);
-		c = ConCat(a,b);
+		c = conCat(a,b);
 	}
 	end = get_time();
 	printf("Go took:\t%f sec, result: %s\n", end-start, c);
@@ -90,7 +90,7 @@ int main() {
 	start = get_time();
 	for (i=0; i<RUNS; i++) {
 		if (c) free(c);
-		c = CConCat(a,b);
+		c = cConCat(a,b);
 	}
 	end = get_time();
 	printf("C took: \t%f sec, result: %s\n", end-start, c);

@@ -16,32 +16,32 @@ int main() {
 	// Ints
 	int x = 10;
 	int y = 5;
-	int sum = Add(x,y);
-	printf("Running Add(%d, %d) returned: %d\n", x, y, sum);
+	int sum = add(x,y);
+	printf("Running add(%d, %d) returned: %d\n", x, y, sum);
 
-	GoInt sqr = Square((GoInt) x); // We can cast to and from Go Types
-	printf("Running Square(%d) returned: %d\n", x, (int) sqr);
+	GoInt sqr = square((GoInt) x); // We can cast to and from Go Types
+	printf("Running square(%d) returned: %d\n", x, (int) sqr);
 
-	printf("Running PrintBits(%d): ", x);
-	PrintBits(x);  // Might be printed out of order. Oops.. Go actually uses threads!
+	printf("Running printBits(%d): ", x);
+	printBits(x);  // Might be printed out of order. Oops.. Go actually uses threads!
 	printf("Oops... Threads!\n");
 
-	char *bits = ToBits(x);
-	printf("Running ToBits(%d) returned: %s\n", x, bits);
+	char *bits = toBits(x);
+	printf("Running toBits(%d) returned: %s\n", x, bits);
 	free(bits);
 
 	// Strings
 	char *a = "Hello ";
 	char *b = "world!";
-	char *c = ConCat(a,b);
-	printf("Running ConCat(%s, %s) returned: %s\n", a, b, c);
+	char *c = conCat(a,b);
+	printf("Running conCat(%s, %s) returned: %s\n", a, b, c);
 	free(c);
 
 	GoString gstr;
 	gstr.p = b;
 	gstr.n = (GoInt) strlen(gstr.p);
-	char *upper = ToUpper(gstr);
-	printf("Running ToUpper(%s) returned: %s\n", gstr.p, upper);
+	char *upper = toUpper(gstr);
+	printf("Running toUpper(%s) returned: %s\n", gstr.p, upper);
 	free(upper);
 	return 0;
 }

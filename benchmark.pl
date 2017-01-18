@@ -27,15 +27,15 @@ use Inline C => <<'END_OF_C_CODE';
 #include <string.h>
 
 // Exported Go Functions
-extern int Add(int p0, int p1);
-extern char* ConCat(char* p0, char* p1);
+extern int add(int p0, int p1);
+extern char* conCat(char* p0, char* p1);
 
 // Native C functions
-int CAdd( int x, int y) {
+int cAdd( int x, int y) {
 	return x + y;
 }
 
-char * CConCat(const char *a, const char *b) {
+char * cConCat(const char *a, const char *b) {
     char *str = NULL;
     size_t n = 0;
 
@@ -79,10 +79,10 @@ my $b = "world!";
 my $r;
 
 # Testing Add functions
-print "Running Add() $runs times:\n";
+print "Running add() $runs times:\n";
 my $t0 = Benchmark->new;
 for (1..$runs) {
-	$r = Go::Add($x, $y);
+	$r = Go::add($x, $y);
 }
 my $t1 = Benchmark->new;
 print "Go took:\t", timestr(timediff($t1, $t0));
@@ -91,7 +91,7 @@ $r = '';
 
 $t0 = Benchmark->new;
 for (1..$runs) {
-	$r = Go::CAdd($x, $y);
+	$r = Go::cAdd($x, $y);
 }
 $t1 = Benchmark->new;
 print "C  took:\t", timestr(timediff($t1, $t0));
@@ -111,7 +111,7 @@ $r = '';
 print "Running ConCat() $runs times:\n";
 $t0 = Benchmark->new;
 for (1..$runs) {
-	$r = Go::ConCat($a, $b);
+	$r = Go::conCat($a, $b);
 }
 $t1 = Benchmark->new;
 print "Go took:\t", timestr(timediff($t1, $t0));
@@ -120,7 +120,7 @@ $r = '';
 
 $t0 = Benchmark->new;
 for (1..$runs) {
-	$r = Go::CConCat($a, $b);
+	$r = Go::cConCat($a, $b);
 }
 $t1 = Benchmark->new;
 print "C  took:\t", timestr(timediff($t1, $t0));
