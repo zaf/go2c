@@ -14,7 +14,8 @@ use warnings;
 package Go;
 
 use Inline (C => Config =>
-    enable       => "autowrap",
+    enable       => 'autowrap',
+    typemaps     => 'go.typemap',  # Here we define the missing typemaps for Go
     ccflagsex    => '-Wall -g -pthread',
     auto_include => '#include "go2c.h"',
     myextlib     => '/home/zaf/src/go2c/go2c.so', # Change me!!
@@ -22,7 +23,7 @@ use Inline (C => Config =>
 
 use Inline C => <<'END_OF_C_CODE';
 	extern int add(int p0, int p1);
-//	extern GoInt square(GoInt p0);  // Missing typemap for GoInt
+	extern GoInt square(GoInt p0);
 	extern void printBits(int p0);
 	extern char* toBits(int p0);
 	extern char* conCat(char* p0, char* p1);
@@ -34,7 +35,7 @@ print "\nCalling Go functions from Perl:\n";
 
 my ($x, $y) = (10, 5);
 print "Running add($x, $y) returned: ", Go::add($x, $y), "\n";
-#print "Running square($x) returned: ", Go::square($x), "\n";
+print "Running square($x) returned: ", Go::square($x), "\n";
 print "Running printBits($x): ";
 Go::printBits($x); # Might be printed out of order. Oops.. Go actually uses threads!
 print "Oops... Threads!\n";
