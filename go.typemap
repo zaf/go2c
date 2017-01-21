@@ -1,8 +1,8 @@
 # A Perl typemap file for Go exported types
 
 TYPEMAP
-GoInt		T_INT
-GoUint		T_U_INT
+GoInt		GO_INT
+GoUint		GO_U_INT
 GoInt8		T_CHAR
 GoUint8		T_U_CHAR
 GoInt16		T_SHORT
@@ -15,12 +15,20 @@ GoFloat32	T_FLOAT
 GoFloat64	T_DOUBLE
 
 INPUT
+GO_INT
+	$var = ($type)SvIV($arg);
+GO_U_INT
+	$var = ($type)SvIV($arg);
 LONG_LONG_INT
 	$var = (long long )SvIV($arg);
 LONG_LONG_U_INT
 	$var = (unsigned long long )SvIV($arg);
 
 OUTPUT
+GO_INT
+	sv_setiv($arg, (IV)$var);
+GO_U_INT
+	sv_setiv($arg, (IV)$var);
 LONG_LONG_INT
 	sv_setiv($arg, (IV)$var);
 LONG_LONG_U_INT

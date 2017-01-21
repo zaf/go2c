@@ -13,12 +13,18 @@ use warnings;
 
 package Go;
 
+my $dir;
+BEGIN {
+	use Cwd;
+	$dir = getcwd();
+}
+
 use Inline (C => Config =>
     enable       => 'autowrap',
     typemaps     => 'go.typemap',  # Here we define the missing typemaps for Go
     ccflagsex    => '-Wall -g -pthread',
     auto_include => '#include "go2c.h"',
-    myextlib     => '/home/zaf/src/go2c/go2c.so', # Change me!!
+    myextlib     => $dir . '/go2c.so',
 );
 
 use Inline C => <<'END_OF_C_CODE';

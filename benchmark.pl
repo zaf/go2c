@@ -14,12 +14,18 @@ use Benchmark ':hireswallclock';
 
 package Go;
 
+my $dir;
+BEGIN {
+	use Cwd;
+	$dir = getcwd();
+}
+
 use Inline (C => Config =>
     enable       => "autowrap",
     ccflagsex    => '-Wall -g -pthread',
     #optimize     => '-march=native -O3',
     auto_include => '#include "go2c.h"',
-    myextlib     => '/home/zaf/src/go2c/go2c.so', # Change me!!
+    myextlib     => $dir . '/go2c.so',
 );
 
 use Inline C => <<'END_OF_C_CODE';
