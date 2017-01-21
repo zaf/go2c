@@ -13,7 +13,7 @@
 #include <sys/resource.h>
 #include "go2c.h"
 
-#define RUNS 2000000
+#define RUNS 1000000
 
 // Hi-Res timer
 double get_time() {

@@ -1,4 +1,4 @@
-#! /usr/src/env perl
+#! /usr/bin/env perl
 
 #
 #	Example of interfacing between Go and Perl programs.

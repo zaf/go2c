@@ -36,6 +36,10 @@ bench: all
 	./benchmark
 	@echo "=== Running the Perl benchmark ==="
 	perl benchmark.pl
+	@echo "=== Running the Python benchmark ==="
+	python3 benchmark.py
+	@echo "=== Running the Ruby benchmark ==="
+	ruby benchmark.rb
 
 clean:
 	go clean

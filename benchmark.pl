@@ -1,4 +1,4 @@
-#! /usr/src/env perl
+#! /usr/bin/env perl
 
 #
 #	Example of interfacing between Go and Perl programs.
@@ -70,7 +70,7 @@ sub concat {
 	return $a . $b;
 }
 
-my $runs = 2_000_000;
+my $runs = 1_000_000;
 
 my $x = 10;
 my $y = 5;
