@@ -26,6 +26,8 @@ run: all
 	./example
 	@echo "=== Running the Perl example code ==="
 	perl example.pl
+	@echo "=== Running the Python example code ==="
+	python3 example.py
 	@echo "=== Running the Ruby example code ==="
 	ruby example.rb
 
