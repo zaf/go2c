@@ -20,11 +20,11 @@ BEGIN {
 }
 
 use Inline (C => Config =>
-    enable       => 'autowrap',
-    typemaps     => 'go.typemap',  # Here we define the missing typemaps for Go
-    ccflagsex    => '-Wall -g -pthread',
-    auto_include => '#include "go2c.h"',
-    myextlib     => $dir . '/go2c.so',
+	enable       => 'autowrap',
+	typemaps     => 'go.typemap',  # Here we define the missing typemaps for Go
+	ccflagsex    => '-Wall -g -pthread',
+	auto_include => '#include "go2c.h"',
+	myextlib     => $dir . '/go2c.so',
 );
 
 use Inline C => <<'END_OF_C_CODE';
