@@ -37,12 +37,12 @@ y = 5
 puts "Running add() #{runs} times:"
 puts "Go takes:"
 Benchmark.bm do |m|
-	m.report { for i in 1..runs; z = Go.add(x, y) ; end }
+	m.report { runs.times { z = Go.add(x, y) } }
 end
 
 puts "Ruby takes:"
 Benchmark.bm do |m|
-	m.report { for i in 1..runs; z = add(x, y) ; end }
+	m.report { runs.times { z = add(x, y) } }
 end
 
 a = "Hello "
@@ -51,10 +51,10 @@ b = "world!"
 puts "Running conCat() #{runs} times:"
 puts "Go takes:"
 Benchmark.bm do |m|
-	m.report { for i in 1..runs; c = Go.conCat(a, b) ; end }
+	m.report { runs.times { c = Go.conCat(a, b) } }
 end
 
 puts "Ruby takes:"
 Benchmark.bm do |m|
-	m.report { for i in 1..runs; c = conCat(a, b) ; end }
+	m.report { runs.times { c = conCat(a, b) } }
 end
