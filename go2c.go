@@ -69,6 +69,22 @@ func toUpper(a string) *C.char { // This function when used in C takes as input 
 	return C.CString(strings.ToUpper(a))
 }
 
+//export toString
+// toString takes an integer and returns its sign and absolute value as strings.
+// Multiple return values are represented in C as stuctures.
+// Returned values must be freed with free() from C or with C.free() from Go.
+func toString(x int) (*C.char, *C.char) { // This function when used in C takes as input GoInt and returns a structure.
+	var sign, num *C.char
+	if x < 0 {
+		sign = C.CString("-")
+		x = -x
+	} else {
+		sign = C.CString("+")
+	}
+	num = C.CString(strconv.Itoa(x))
+	return sign, num
+}
+
 //export toUpper2
 // toUpper2 converts a string to upper case
 // We cannot use this function from C safely, Go will panic at runtime unless
