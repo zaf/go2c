@@ -8,18 +8,17 @@
 #	See the LICENSE file at the top of the source tree.
 #
 
-require 'fiddle'
-require 'fiddle/import'
+require 'ffi'
 require 'benchmark'
 
 runs = 1_000_000
 
 module Go
-	extend Fiddle::Importer
-	dlload './go2c.so'
+	extend FFI::Library
+	ffi_lib './go2c.so'
 
-	extern 'int add(int, int)'
-	extern 'char* conCat(char*, char*)'
+	attach_function :add, [:int, :int], :int
+	attach_function :conCat, [:string, :string], :string
 end
 
 # Native functions

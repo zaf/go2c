@@ -8,24 +8,35 @@
 #	See the LICENSE file at the top of the source tree.
 #
 
-require 'fiddle'
-require 'fiddle/import'
+require 'ffi'
 
 module Go
-	extend Fiddle::Importer
-	dlload './go2c.so'
+	extend FFI::Library
+	ffi_lib './go2c.so'
 
-	typealias "GoInt", "int"
-	typealias "GoString", "struct { const char *; GoInt; }"
+	# define class GoString to map:
+	# C type struct { const char *p; GoInt n; }
+	class String < FFI::Struct
+		layout	:p,     :pointer,
+				:len,   :long_long
 
-	GoString = struct ['const char * p', 'GoInt n']
+		def self.value
+			return self.val
+		end
 
-	extern 'int add(int, int)'
-	extern 'GoInt square(GoInt)'
-	extern 'void printBits(int)'
-	extern 'char* toBits(int)'
-	extern 'char* conCat(char*, char*)'
-	extern 'char* toUpper(GoString)'
+		def initialize(str)
+			self[:p] = FFI::MemoryPointer.from_string(str)
+			self[:len] = str.bytesize
+			return self
+		end
+	end
+
+	attach_function :add, [:int, :int], :int
+	attach_function :square, [:int], :int
+	attach_function :printBits, [:int], :void
+	attach_function :toBits, [:int], :string
+	attach_function :conCat, [:string, :string], :string
+	attach_function :toUpper, [String.value], :string
 end
 
 print "\nCalling Go functions from Ruby:\n"
@@ -49,9 +60,5 @@ b = "world!"
 c = Go.conCat(a, b)
 puts "Running conCat(#{a}, #{b}) returned: #{c}"
 
-str = Go::GoString.malloc
-str.p = b
-str.n = b.length
-
-upper = Go.toUpper(str)
-puts "Running toUpper(#{str.p}) returned: #{upper}"
+upper = Go.toUpper(Go::String.new(a))
+puts "Running toUpper(#{a}) returned: #{upper}"
