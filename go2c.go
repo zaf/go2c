@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"unsafe"
 )
 
 // A main function must be present, even if empty.
@@ -108,19 +107,10 @@ func toString(x int) (*C.char, *C.char) { // This function when used in C takes 
 }
 
 // toUpper2 converts a string to upper case
-// Returning Go pointers or types that contain a Go pointer comes with some restrictions.
-// All Go pointers passed to C must point to pinned Go memory, see https://pkg.go.dev/cmd/cgo#hdr-Passing_pointers
+// From https://pkg.go.dev/cmd/cgo#hdr-Passing_pointers:
+// A Go function called by C code may return a Go pointer to pinned memory (which implies that it may not return a string, slice, channel, and so forth).
 //
 //export toUpper2
-func toUpper2(a string) string { // This function when used in C takes as input a GoString struct and returns a GoString
+func toUpper2(a string) string { // We cannot use this function from C, Go will panic at runtime.
 	return strings.ToUpper(a)
-}
-
-// ToUpper3 converts a string to upper case
-// This is not safe to use in C, it requires special handling, see https://pkg.go.dev/runtime/cgo#Handle
-//
-//export toUpper3
-func toUpper3(a string) unsafe.Pointer { // This function when used in C returns a void* that points to a Go string
-	s := strings.ToUpper(a)
-	return unsafe.Pointer(&s)
 }

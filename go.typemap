@@ -1,8 +1,8 @@
 # A Perl typemap file for Go exported types
 
 TYPEMAP
-GoByte      T_CHAR
-GoRune      T_INT
+GoByte		T_CHAR
+GoRune		T_INT
 GoInt		GO_INT
 GoUint		GO_U_INT
 GoInt8		T_CHAR
@@ -16,9 +16,7 @@ GoUint64	LONG_LONG_U_INT
 GoFloat32	T_FLOAT
 GoFloat64	T_DOUBLE
 GoString	T_STRING
-GoSlice		T_ARRAYREF
-GoArray		T_ARRAY
-GoMap		T_HASH
+
 
 INPUT
 GO_INT
@@ -30,29 +28,11 @@ LONG_LONG_INT
 LONG_LONG_U_INT
 	$var = (unsigned long long )SvIV($arg);
 T_STRING
-    {
-        STRLEN len;
-        char *str = SvPVutf8($arg, len);
-        $var = (GoString){str, len};
-    }
-T_ARRAYREF
-    {
-        AV *av = (AV*)SvRV($arg);
-        int len = av_len(av) + 1;
-        $var.data = (void*)av;
-        $var.len = len;
-    }
-T_ARRAY
-    {
-        int len = items;
-        $var.data = (void*)av;
-        $var.len = len;
-    }
-T_HASH
-    {
-        HV *hv = (HV*)SvRV($arg);
-        $var = (GoMap)hv;
-    }
+	{
+		STRLEN len;
+		char *str = SvPVutf8($arg, len);
+		$var = (GoString){str, len};
+	}
 
 OUTPUT
 GO_INT
@@ -64,17 +44,4 @@ LONG_LONG_INT
 LONG_LONG_U_INT
 	sv_setiv($arg, (IV)$var);
 T_STRING
-    sv_setpvn_utf8($arg, $var.p, $var.n);
-T_ARRAYREF
-    {
-        AV *av = (AV*)$var.data;
-        sv_setref_pv($arg, "GoArray", (void*)av);
-    }
-T_ARRAY
-    {
-        sv_setref_pv($arg, "GoArray", (void*)av);
-    }
-T_HASH
-    {
-        sv_setref_pv($arg, "GoMap", (void*)hv);
-    }
+	sv_setpvn_utf8($arg, $var.p, $var.n);

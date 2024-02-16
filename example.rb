@@ -14,7 +14,7 @@ module Go
 	extend FFI::Library
 	ffi_lib './go2c.so'
 
-	# define class GoString to map:
+	# define class String to map:
 	# C type struct { const char *p; GoInt n; }
 	class String < FFI::Struct
 		layout	:p,     :pointer,
@@ -60,5 +60,6 @@ b = "world!"
 c = Go.conCat(a, b)
 puts "Running conCat(#{a}, #{b}) returned: #{c}"
 
-upper = Go.toUpper(Go::String.new(a))
-puts "Running toUpper(#{a}) returned: #{upper}"
+gostr = Go::String.new(b)
+upper = Go.toUpper(gostr)
+puts "Running toUpper(#{b}) returned: #{upper}"

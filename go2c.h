@@ -129,15 +129,10 @@ struct toString_return {
 extern struct toString_return toString(GoInt x);
 
 // toUpper2 converts a string to upper case
-// Returning Go pointers or types that contain a Go pointer comes with some restrictions.
-// All Go pointers passed to C must point to pinned Go memory, see https://pkg.go.dev/cmd/cgo#hdr-Passing_pointers
+// From https://pkg.go.dev/cmd/cgo#hdr-Passing_pointers:
+// A Go function called by C code may return a Go pointer to pinned memory (which implies that it may not return a string, slice, channel, and so forth).
 //
 extern GoString toUpper2(GoString a);
-
-// ToUpper3 converts a string to upper case
-// This is not safe to use in C, it requires special handling, see https://pkg.go.dev/runtime/cgo#Handle
-//
-extern void* toUpper3(GoString a);
 
 #ifdef __cplusplus
 }

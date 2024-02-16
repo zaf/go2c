@@ -54,5 +54,4 @@ my $a = "Hello ";
 my $b = "world!";
 print "Running conCat($a, $b) returned: ", Go::conCat($a,$b), "\n";
 
-my $str = "Hello World!";
-print "Running toUpper($str) returned: ", Go::toUpper($str), "\n";
+print "Running toUpper($b) returned: ", Go::toUpper($b), "\n";

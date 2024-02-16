@@ -48,6 +48,15 @@ class GoString(ctypes.Structure):
 Go.toUpper.argtypes = [GoString]
 Go.toUpper.restype = ctypes.c_char_p
 
-str = GoString(a, len(a.value))
+str = GoString(b, len(b.value))
 upper = Go.toUpper(str)
 print("Running toUpper({}) returned: {}".format(str.p.decode('utf-8'), upper.decode('utf-8')))
+
+class toString_return(ctypes.Structure):
+	_fields_ = [("s", ctypes.c_char_p), ("n",  ctypes.c_char_p)]
+
+Go.toString.argtypes = [ctypes.c_int]
+Go.toString.restype = toString_return
+
+s = Go.toString(x)
+print("Running toString({}) returned: {} {}".format(x, s.s.decode('utf-8'), s.n.decode('utf-8')))
