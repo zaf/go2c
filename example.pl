@@ -23,6 +23,7 @@ use Inline (C => Config =>
 	enable       => 'autowrap',
 	typemaps     => 'go.typemap',  # Here we define the missing typemaps for Go
 	ccflagsex    => '-Wall -g -pthread',
+	optimize     => '-march=native -O3',
 	auto_include => '#include "go2c.h"',
 	myextlib     => $dir . '/go2c.so',
 );
@@ -33,6 +34,7 @@ use Inline C => <<'END_OF_C_CODE';
 	extern void printBits(int p0);
 	extern char* toBits(int p0);
 	extern char* conCat(char* p0, char* p1);
+	extern char* toUpper(GoString p0);
 END_OF_C_CODE
 
 package main;
@@ -51,3 +53,6 @@ print "Running toBits($x) returned: ", Go::toBits($x), "\n";
 my $a = "Hello ";
 my $b = "world!";
 print "Running conCat($a, $b) returned: ", Go::conCat($a,$b), "\n";
+
+my $str = "Hello World!";
+print "Running toUpper($str) returned: ", Go::toUpper($str), "\n";

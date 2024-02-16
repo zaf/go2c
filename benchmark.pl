@@ -23,7 +23,7 @@ BEGIN {
 use Inline (C => Config =>
 	enable       => "autowrap",
 	ccflagsex    => '-Wall -g -pthread',
-	#optimize     => '-march=native -O3',
+	optimize     => '-march=native -O3',
 	auto_include => '#include "go2c.h"',
 	myextlib     => $dir . '/go2c.so',
 );

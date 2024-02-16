@@ -80,25 +80,40 @@ extern "C" {
 #endif
 
 
-// add adds two integers
+// add adds two integers.
+//
 extern int add(int x, int y);
 
-// square returns the square of an integer
+// square returns the square of an integer.
+//
 extern GoInt square(GoInt x);
 
-// printBits prints an integer in binary format
+// printBits prints an integer in binary format.
+//
 extern void printBits(int x);
+
+// negate returns the logical negation of a boolean.
+//
+extern GoUint8 negate(GoUint8 b);
 
 // toBits returns a string with the binary representation of an integer
 // Returned value must be freed with free() from C or with C.free() from Go.
+//
 extern char* toBits(int x);
 
 // conCat concatenates 2 strings.
 // Returned value must be freed with free() from C or with C.free() from Go.
+//
 extern char* conCat(char* a, char* b);
+
+// join concatenates a slice of strings.
+// Returned value must be freed with free() from C or with C.free() from Go.
+//
+extern char* join(GoSlice s);
 
 // toUpper converts a string to upper case
 // Returned value must be freed with free() from C or with C.free() from Go.
+//
 extern char* toUpper(GoString a);
 
 /* Return type for toString */
@@ -110,6 +125,7 @@ struct toString_return {
 // toString takes an integer and returns its sign and absolute value as strings.
 // Multiple return values are represented in C as stuctures.
 // Returned values must be freed with free() from C or with C.free() from Go.
+//
 extern struct toString_return toString(GoInt x);
 
 // toUpper2 converts a string to upper case
@@ -117,11 +133,13 @@ extern struct toString_return toString(GoInt x);
 // we disable cgo runtime checks. The checks can be disabled by setting the environment
 // variable GODEBUG=cgocheck=0, but it's not advised to. A Go function called by C code
 // may not return a Go pointer.
+//
 extern GoString toUpper2(GoString a);
 
 // ToUpper3 converts a string to upper case
 // This beats the above restrictions, but it is really a recipe for disaster :)
 // Don't write or use code similar to this!
+//
 extern void* toUpper3(GoString a);
 
 #ifdef __cplusplus
