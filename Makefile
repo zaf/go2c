@@ -15,11 +15,11 @@ go2c.so: go2c.go
 
 # Build C example
 example: example.c go2c.a
-	cc -g -Wall -pthread -o $@ $^ go2c.a
+	cc -g -Wall -O3 -pthread -o $@ $^
 
 # Build C benchmark
 benchmark: benchmark.c go2c.a
-	cc -g -Wall -pthread -o $@ $^ go2c.a
+	cc -g -Wall -O3 -pthread -o $@ $^
 
 run: all
 	@echo "=== Running the C example code ==="

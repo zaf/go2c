@@ -1,21 +1,21 @@
 # A Perl typemap file for Go exported types
 
 TYPEMAP
-GoByte		T_CHAR
-GoRune		T_INT
-GoInt		GO_INT
-GoUint		GO_U_INT
-GoInt8		T_CHAR
-GoUint8		T_U_CHAR
-GoInt16		T_SHORT
-GoUint16	T_U_SHORT
-GoInt32		T_INT
-GoUint32	T_U_INT
-GoInt64		LONG_LONG_INT
-GoUint64	LONG_LONG_U_INT
-GoFloat32	T_FLOAT
-GoFloat64	T_DOUBLE
-GoString	T_STRING
+GoByte			T_CHAR
+GoRune			T_INT
+GoInt			GO_INT
+GoUint			GO_U_INT
+GoInt8			T_CHAR
+GoUint8			T_U_CHAR
+GoInt16			T_SHORT
+GoUint16		T_U_SHORT
+GoInt32			T_INT
+GoUint32		T_U_INT
+GoInt64			LONG_LONG_INT
+GoUint64		LONG_LONG_U_INT
+GoFloat32		T_FLOAT
+GoFloat64		T_DOUBLE
+GoString		T_STRING
 
 
 INPUT
