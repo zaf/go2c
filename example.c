@@ -30,11 +30,6 @@ int main() {
 	printf("Running toBits(%d) returned: %s\n", x, bits);
 	free(bits);
 
-	struct toString_return s = toString(x);
-	printf("Running toString(%d) returned: %s, %s\n", x, s.r0, s.r1);
-	free(s.r0);
-	free(s.r1);
-
 	// Strings
 	char *a = "Hello ";
 	char *b = "world!";
@@ -48,5 +43,11 @@ int main() {
 	char *upper = toUpper(gstr);
 	printf("Running toUpper(%s) returned: %s\n", gstr.p, upper);
 	free(upper);
+
+	struct toString_return s = toString(x);
+	printf("Running toString(%d) returned: %s, %s\n", x, s.r0, s.r1);
+	free(s.r0);
+	free(s.r1);
+
 	return 0;
 }
