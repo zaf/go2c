@@ -10,6 +10,14 @@
 
 require 'ffi'
 
+# Go string-returning functions return malloc'd memory,
+# so we bind libc's free() to release it after copying.
+module LibC
+	extend FFI::Library
+	ffi_lib FFI::Library::LIBC
+	attach_function :free, [:pointer], :void
+end
+
 module Go
 	extend FFI::Library
 	ffi_lib './go2c.so'
@@ -37,13 +45,15 @@ module Go
 			return self.val
 		end
 	end
+	# Returned char* are mapped to :pointer so we can free() them ourselves,
+	# square and toString use :long_long to match GoInt (64 bit).
 	attach_function :add, [:int, :int], :int
-	attach_function :square, [:int], :int
+	attach_function :square, [:long_long], :long_long
 	attach_function :printBits, [:int], :void
-	attach_function :toBits, [:int], :string
-	attach_function :conCat, [:string, :string], :string
-	attach_function :toUpper, [String.value], :string
-	attach_function :toString, [:int], StringReturn.value
+	attach_function :toBits, [:int], :pointer
+	attach_function :conCat, [:string, :string], :pointer
+	attach_function :toUpper, [String.value], :pointer
+	attach_function :toString, [:long_long], StringReturn.value
 end
 
 print "\nCalling Go functions from Ruby:\n"
@@ -60,16 +70,21 @@ print "Running printBits(#{x}): "
 Go.printBits(x) # Might be printed out of order. Oops.. Go actually uses threads!
 
 bits = Go.toBits(x)
-puts "Running toBits(#{x}) returned: #{bits}"
+puts "Running toBits(#{x}) returned: #{bits.read_string}"
+LibC.free(bits)
 
 a = "Hello "
 b = "world!"
 c = Go.conCat(a, b)
-puts "Running conCat(#{a}, #{b}) returned: #{c}"
+puts "Running conCat(#{a}, #{b}) returned: #{c.read_string}"
+LibC.free(c)
 
 gostr = Go::String.new(b)
 upper = Go.toUpper(gostr)
-puts "Running toUpper(#{b}) returned: #{upper}"
+puts "Running toUpper(#{b}) returned: #{upper.read_string}"
+LibC.free(upper)
 
 s = Go.toString(x)
 puts "Running toString(#{x}) returned: #{s[:r0].read_string} #{s[:r1].read_string}"
+LibC.free(s[:r0])
+LibC.free(s[:r1])

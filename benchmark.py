@@ -13,6 +13,11 @@ import ctypes
 
 Go = ctypes.CDLL('./go2c.so')
 
+# Go string-returning functions return malloc'd memory,
+# so we take the raw pointer and free it with libc's free() after copying.
+libc = ctypes.CDLL(None)
+libc.free.argtypes = [ctypes.c_void_p]
+
 runs = 1000000
 
 # Native functions
@@ -40,15 +45,17 @@ print("Python took:\t{:0.6f} sec, result: {}".format(end-start, z))
 
 print("Running conCat() {} times:".format(runs))
 Go.conCat.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
-Go.conCat.restype = ctypes.c_char_p
+Go.conCat.restype = ctypes.c_void_p
 a = ctypes.c_char_p(b"Hello ")
 b = ctypes.c_char_p(b"world!")
 
 start = timer()
 for i in range(runs):
-	c = Go.conCat(a, b)
+	p = Go.conCat(a, b)
+	c = ctypes.string_at(p).decode('utf-8')
+	libc.free(p)
 end = timer()
-print("Go took:\t{:0.6f} sec, result: {}".format(end-start, c.decode('utf-8')))
+print("Go took:\t{:0.6f} sec, result: {}".format(end-start, c))
 
 a = "Hello "
 b = "world!"

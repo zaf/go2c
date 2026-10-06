@@ -12,6 +12,18 @@ import ctypes
 
 Go = ctypes.CDLL('./go2c.so')
 
+# Go string-returning functions return malloc'd memory.
+# ctypes copies c_char_p return values and loses the pointer, so we take the
+# return value as a raw pointer, copy it ourselves and free it with libc's free().
+libc = ctypes.CDLL(None)
+libc.free.argtypes = [ctypes.c_void_p]
+
+def goString(p):
+	"""Copy a Go-allocated char* into a Python str and free it."""
+	s = ctypes.string_at(p).decode('utf-8')
+	libc.free(p)
+	return s
+
 print("\nCalling Go functions from Python:")
 
 x = 10
@@ -21,6 +33,10 @@ y = 5
 z = Go.add(x, y)
 print("Running add({}, {}) returned: {}".format(x, y, z))
 
+# square takes and returns a GoInt which is a 64 bit integer,
+# so we must set argtypes and restype to avoid truncation to 32 bits
+Go.square.argtypes = [ctypes.c_longlong]
+Go.square.restype = ctypes.c_longlong
 s = Go.square(x)
 print("Running square({}) returned: {}".format(x, s))
 
@@ -29,34 +45,35 @@ Go.printBits(x) # Might be printed out of order. Oops.. Go actually uses threads
 print("Oops... Threads!")
 
 # We have to set the the restype attribute when the return type is not int
-Go.toBits.restype = ctypes.c_char_p
+Go.toBits.restype = ctypes.c_void_p
 bits = Go.toBits(x)
-print("Running toBits({}) returned: {}".format(x, bits.decode('utf-8')))
+print("Running toBits({}) returned: {}".format(x, goString(bits)))
 
 # We can also set the argtypes attribute
 Go.conCat.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
-Go.conCat.restype = ctypes.c_char_p
+Go.conCat.restype = ctypes.c_void_p
 a = ctypes.c_char_p(b"Hello ")
 b = ctypes.c_char_p(b"world!")
 c = Go.conCat(a, b)
-print("Running conCat({}, {}) returned: {}".format(a.value.decode('utf-8'), b.value.decode('utf-8'), c.decode('utf-8')))
+print("Running conCat({}, {}) returned: {}".format(a.value.decode('utf-8'), b.value.decode('utf-8'), goString(c)))
 
 # We can define structures
+# GoString is struct { const char *p; ptrdiff_t n; } so n must be 64 bit
 class GoString(ctypes.Structure):
-	_fields_ = [("p", ctypes.c_char_p), ("n",  ctypes.c_int)]
+	_fields_ = [("p", ctypes.c_char_p), ("n",  ctypes.c_ssize_t)]
 
 Go.toUpper.argtypes = [GoString]
-Go.toUpper.restype = ctypes.c_char_p
+Go.toUpper.restype = ctypes.c_void_p
 
 str = GoString(b, len(b.value))
 upper = Go.toUpper(str)
-print("Running toUpper({}) returned: {}".format(str.p.decode('utf-8'), upper.decode('utf-8')))
+print("Running toUpper({}) returned: {}".format(str.p.decode('utf-8'), goString(upper)))
 
 class toString_return(ctypes.Structure):
-	_fields_ = [("s", ctypes.c_char_p), ("n",  ctypes.c_char_p)]
+	_fields_ = [("s", ctypes.c_void_p), ("n",  ctypes.c_void_p)]
 
-Go.toString.argtypes = [ctypes.c_int]
+Go.toString.argtypes = [ctypes.c_longlong]
 Go.toString.restype = toString_return
 
 s = Go.toString(x)
-print("Running toString({}) returned: {} {}".format(x, s.s.decode('utf-8'), s.n.decode('utf-8')))
+print("Running toString({}) returned: {} {}".format(x, goString(s.s), goString(s.n)))

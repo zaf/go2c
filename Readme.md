@@ -12,6 +12,6 @@ and compile the C example
 These benchmarks measure the function call overhead, since the functions
 are very short and have negligible runtime.
 
-For the Perl example Inline::C module is needed
+For the Perl example Inline::C module is needed, for the Ruby example the ffi gem.
 
 Still WIP, see source files for comments and details.

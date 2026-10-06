@@ -95,15 +95,12 @@ func toUpper(a string) *C.char { // This function when used in C takes as input 
 //
 //export toString
 func toString(x int) (*C.char, *C.char) { // This function when used in C takes as input GoInt and returns a structure.
-	var sign, num *C.char
+	// Negating MinInt64 overflows, so format first and strip the sign instead of using -x.
+	num := strconv.FormatInt(int64(x), 10)
 	if x < 0 {
-		sign = C.CString("-")
-		x = -x
-	} else {
-		sign = C.CString("+")
+		return C.CString("-"), C.CString(num[1:])
 	}
-	num = C.CString(strconv.Itoa(x))
-	return sign, num
+	return C.CString("+"), C.CString(num)
 }
 
 // toUpper2 converts a string to upper case

@@ -13,12 +13,20 @@ require 'benchmark'
 
 runs = 1_000_000
 
+# Go string-returning functions return malloc'd memory,
+# so we bind libc's free() to release it after copying.
+module LibC
+	extend FFI::Library
+	ffi_lib FFI::Library::LIBC
+	attach_function :free, [:pointer], :void
+end
+
 module Go
 	extend FFI::Library
 	ffi_lib './go2c.so'
 
 	attach_function :add, [:int, :int], :int
-	attach_function :conCat, [:string, :string], :string
+	attach_function :conCat, [:string, :string], :pointer
 end
 
 # Native functions
@@ -50,7 +58,7 @@ b = "world!"
 puts "Running conCat() #{runs} times:"
 puts "Go takes:"
 Benchmark.bm do |m|
-	m.report { runs.times { c = Go.conCat(a, b) } }
+	m.report { runs.times { p = Go.conCat(a, b); c = p.read_string; LibC.free(p) } }
 end
 
 puts "Ruby takes:"

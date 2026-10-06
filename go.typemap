@@ -1,11 +1,18 @@
 # A Perl typemap file for Go exported types
+#
+# Only types cgo actually emits into the generated header are mapped
+# (see go2c.h). GoByte/GoRune are not such types: byte maps to GoUint8
+# and rune to GoInt32.
+# GoComplex64/128, GoInterface and GoSlice have no sensible generic
+# mapping to Perl scalars; wrappers using them must be written by hand.
 
 TYPEMAP
-GoByte			T_CHAR
-GoRune			T_INT
+# Go string-returning functions return malloc'd memory that must be freed
+# after being copied into the SV.
+char *			GO_PV
 GoInt			GO_INT
 GoUint			GO_U_INT
-GoInt8			T_CHAR
+GoInt8			T_INT
 GoUint8			T_U_CHAR
 GoInt16			T_SHORT
 GoUint16		T_U_SHORT
@@ -13,20 +20,28 @@ GoInt32			T_INT
 GoUint32		T_U_INT
 GoInt64			LONG_LONG_INT
 GoUint64		LONG_LONG_U_INT
+GoUintptr		GO_UINTPTR
 GoFloat32		T_FLOAT
 GoFloat64		T_DOUBLE
 GoString		T_STRING
+# GoMap and GoChan are opaque void* handles, pass them through as pointers.
+GoMap			T_PTR
+GoChan			T_PTR
 
 
 INPUT
+GO_PV
+	$var = ($type)SvPV_nolen($arg)
 GO_INT
 	$var = ($type)SvIV($arg);
 GO_U_INT
-	$var = ($type)SvIV($arg);
+	$var = ($type)SvUV($arg);
 LONG_LONG_INT
 	$var = (long long )SvIV($arg);
 LONG_LONG_U_INT
-	$var = (unsigned long long )SvIV($arg);
+	$var = (unsigned long long )SvUV($arg);
+GO_UINTPTR
+	$var = ($type)SvUV($arg);
 T_STRING
 	{
 		STRLEN len;
@@ -35,13 +50,22 @@ T_STRING
 	}
 
 OUTPUT
+GO_PV
+	if ($var) {
+		sv_setpv((SV*)$arg, $var);
+		free($var);
+	} else {
+		sv_setsv($arg, &PL_sv_undef);
+	}
 GO_INT
 	sv_setiv($arg, (IV)$var);
 GO_U_INT
-	sv_setiv($arg, (IV)$var);
+	sv_setuv($arg, (UV)$var);
 LONG_LONG_INT
 	sv_setiv($arg, (IV)$var);
 LONG_LONG_U_INT
-	sv_setiv($arg, (IV)$var);
+	sv_setuv($arg, (UV)$var);
+GO_UINTPTR
+	sv_setuv($arg, (UV)$var);
 T_STRING
-	sv_setpvn_utf8($arg, $var.p, $var.n);
+	sv_setpvn($arg, $var.p, $var.n); SvUTF8_on($arg);

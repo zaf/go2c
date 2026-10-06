@@ -22,6 +22,7 @@ BEGIN {
 
 use Inline (C => Config =>
 	enable       => "autowrap",
+	typemaps     => 'go.typemap',  # Here we define the missing typemaps for Go
 	ccflagsex    => '-Wall -g -pthread',
 	optimize     => '-march=native -O3',
 	auto_include => '#include "go2c.h"',

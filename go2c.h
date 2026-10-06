@@ -12,6 +12,8 @@
 
 #ifndef GO_CGO_GOSTRING_TYPEDEF
 typedef struct { const char *p; ptrdiff_t n; } _GoString_;
+extern size_t _GoStringLen(_GoString_ s);
+extern const char *_GoStringPtr(_GoString_ s);
 #endif
 
 #endif
@@ -49,9 +51,15 @@ typedef size_t GoUintptr;
 typedef float GoFloat32;
 typedef double GoFloat64;
 #ifdef _MSC_VER
+#if !defined(__cplusplus) || _MSVC_LANG <= 201402L
 #include <complex.h>
 typedef _Fcomplex GoComplex64;
 typedef _Dcomplex GoComplex128;
+#else
+#include <complex>
+typedef std::complex<float> GoComplex64;
+typedef std::complex<double> GoComplex128;
+#endif
 #else
 typedef float _Complex GoComplex64;
 typedef double _Complex GoComplex128;
@@ -79,41 +87,13 @@ typedef struct { void *data; GoInt len; GoInt cap; } GoSlice;
 extern "C" {
 #endif
 
-
-// add adds two integers.
-//
 extern int add(int x, int y);
-
-// square returns the square of an integer.
-//
 extern GoInt square(GoInt x);
-
-// printBits prints an integer in binary format.
-//
 extern void printBits(int x);
-
-// negate returns the logical negation of a boolean.
-//
 extern GoUint8 negate(GoUint8 b);
-
-// toBits returns a string with the binary representation of an integer
-// Returned value must be freed with free() from C or with C.free() from Go.
-//
 extern char* toBits(int x);
-
-// conCat concatenates 2 strings.
-// Returned value must be freed with free() from C or with C.free() from Go.
-//
 extern char* conCat(char* a, char* b);
-
-// join concatenates a slice of strings.
-// Returned value must be freed with free() from C or with C.free() from Go.
-//
 extern char* join(GoSlice s);
-
-// toUpper converts a string to upper case
-// Returned value must be freed with free() from C or with C.free() from Go.
-//
 extern char* toUpper(GoString a);
 
 /* Return type for toString */
@@ -121,17 +101,7 @@ struct toString_return {
 	char* r0;
 	char* r1;
 };
-
-// toString takes an integer and returns its sign and absolute value as strings.
-// Multiple return values are represented in C as stuctures.
-// Returned values must be freed with free() from C or with C.free() from Go.
-//
 extern struct toString_return toString(GoInt x);
-
-// toUpper2 converts a string to upper case
-// From https://pkg.go.dev/cmd/cgo#hdr-Passing_pointers:
-// A Go function called by C code may return a Go pointer to pinned memory (which implies that it may not return a string, slice, channel, and so forth).
-//
 extern GoString toUpper2(GoString a);
 
 #ifdef __cplusplus
