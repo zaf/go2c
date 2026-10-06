@@ -1,6 +1,6 @@
 /*
 	Example of interfacing between Go and C programs.
-	Copyright (C) 2017, Lefteris Zafiris <zaf@fastmail.com>
+	Copyright (C) 2017-2026, Lefteris Zafiris <zaf@fastmail.com>
 
 	This program is free software, distributed under the terms of the MIT License.
 	See the LICENSE file at the top of the source tree.
@@ -48,6 +48,16 @@ int main() {
 	printf("Running toString(%d) returned: %s, %s\n", x, s.r0, s.r1);
 	free(s.r0);
 	free(s.r1);
+
+	// Pinned Go memory: getBuf() hands out a pointer to Go memory that we
+	// can keep and use, because it is pinned with runtime.Pinner.
+	// Unlike every other pointer returned above it must NOT be freed and
+	// it stays valid only until releaseBuf() is called.
+	char *p = (char *) getBuf();
+	printf("Running getBuf() returned: %s\n", p);
+	p[0] = 'X';  // Writing into Go memory from C
+	showBuf();  // Go reads what C wrote - might be printed out of order. Oops.. Threads!
+	releaseBuf();  // p must not be used anymore after this
 
 	return 0;
 }

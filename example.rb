@@ -2,7 +2,7 @@
 
 #
 #	Example of interfacing between Go and Ruby programs.
-#	Copyright (C) 2017, Lefteris Zafiris <zaf@fastmail.com>
+#	Copyright (C) 2017-2026, Lefteris Zafiris <zaf@fastmail.com>
 #
 #	This program is free software, distributed under the terms of the MIT License.
 #	See the LICENSE file at the top of the source tree.
@@ -54,6 +54,9 @@ module Go
 	attach_function :conCat, [:string, :string], :pointer
 	attach_function :toUpper, [String.value], :pointer
 	attach_function :toString, [:long_long], StringReturn.value
+	attach_function :getBuf, [], :pointer
+	attach_function :showBuf, [], :void
+	attach_function :releaseBuf, [], :void
 end
 
 print "\nCalling Go functions from Ruby:\n"
@@ -68,6 +71,7 @@ puts "Running square(#{x}) returned: #{s}"
 
 print "Running printBits(#{x}): "
 Go.printBits(x) # Might be printed out of order. Oops.. Go actually uses threads!
+puts "Oops... Threads!"
 
 bits = Go.toBits(x)
 puts "Running toBits(#{x}) returned: #{bits.read_string}"
@@ -88,3 +92,11 @@ s = Go.toString(x)
 puts "Running toString(#{x}) returned: #{s[:r0].read_string} #{s[:r1].read_string}"
 LibC.free(s[:r0])
 LibC.free(s[:r1])
+
+# getBuf() returns a raw pointer to pinned Go memory, not a malloc'd C
+# string: it must not be freed and stays valid only until Go.releaseBuf().
+pinned = Go.getBuf()
+puts "Running getBuf() returned: #{pinned.read_string}"
+pinned.put_bytes(0, 'X') # Writing into Go memory from Ruby
+Go.showBuf() # Might be printed out of order. Oops.. Go actually uses threads!
+Go.releaseBuf()

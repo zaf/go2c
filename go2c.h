@@ -103,6 +103,9 @@ struct toString_return {
 };
 extern struct toString_return toString(GoInt x);
 extern GoString toUpper2(GoString a);
+extern void* getBuf(void);
+extern void showBuf(void);
+extern void releaseBuf(void);
 
 #ifdef __cplusplus
 }

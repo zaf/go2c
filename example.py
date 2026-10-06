@@ -2,7 +2,7 @@
 
 #
 #	Example of interfacing between Go and Python programs.
-#	Copyright (C) 2017, Lefteris Zafiris <zaf@fastmail.com>
+#	Copyright (C) 2017-2026, Lefteris Zafiris <zaf@fastmail.com>
 #
 #	This program is free software, distributed under the terms of the MIT License.
 #	See the LICENSE file at the top of the source tree.
@@ -77,3 +77,12 @@ Go.toString.restype = toString_return
 
 s = Go.toString(x)
 print("Running toString({}) returned: {} {}".format(x, goString(s.s), goString(s.n)))
+
+# getBuf() returns a raw pointer to pinned Go memory, not a malloc'd C string:
+# it must not be freed and stays valid only until Go.releaseBuf() is called.
+Go.getBuf.restype = ctypes.c_void_p
+pinned = Go.getBuf()
+print("Running getBuf() returned: {}".format(ctypes.string_at(pinned).decode('utf-8')))
+ctypes.memmove(pinned, b"X", 1)  # Writing into Go memory from Python
+Go.showBuf() # Might be printed out of order. Oops.. Go actually uses threads!
+Go.releaseBuf()

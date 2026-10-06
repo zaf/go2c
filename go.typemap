@@ -1,14 +1,12 @@
 # A Perl typemap file for Go exported types
-#
-# Only types cgo actually emits into the generated header are mapped
-# (see go2c.h). GoByte/GoRune are not such types: byte maps to GoUint8
-# and rune to GoInt32.
-# GoComplex64/128, GoInterface and GoSlice have no sensible generic
-# mapping to Perl scalars; wrappers using them must be written by hand.
 
 TYPEMAP
 # Go string-returning functions return malloc'd memory that must be freed
 # after being copied into the SV.
+# GO_PV is byte-oriented in both directions: input passes the raw
+# buffer, output returns unflagged bytes. Callers passing or
+# receiving non-ASCII text must handle UTF-8 themselves or use
+# the GoString functions (T_STRING), which are UTF-8 symmetric.
 char *			GO_PV
 GoInt			GO_INT
 GoUint			GO_U_INT
@@ -24,7 +22,6 @@ GoUintptr		GO_UINTPTR
 GoFloat32		T_FLOAT
 GoFloat64		T_DOUBLE
 GoString		T_STRING
-# GoMap and GoChan are opaque void* handles, pass them through as pointers.
 GoMap			T_PTR
 GoChan			T_PTR
 

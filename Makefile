@@ -1,6 +1,6 @@
 #
 #	Example of interfacing between Go and C programs.
-#	Copyright (C) 2017, Lefteris Zafiris <zaf@fastmail.com>
+#	Copyright (C) 2017-2026, Lefteris Zafiris <zaf@fastmail.com>
 #
 
 all: go2c.a go2c.so example benchmark
