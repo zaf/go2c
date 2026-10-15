@@ -33,10 +33,16 @@ y = 5
 z = Go.add(x, y)
 print("Running add({}, {}) returned: {}".format(x, y, z))
 
-# square takes and returns a GoInt which is a 64 bit integer,
-# so we must set argtypes and restype to avoid truncation to 32 bits
-Go.square.argtypes = [ctypes.c_longlong]
-Go.square.restype = ctypes.c_longlong
+# GoInt (Go's int) is always the same size as a pointer (see the GoInt
+# typedef in go2c.h), and ctypes.c_ssize_t (Py_ssize_t) is also always
+# the same size as a pointer, so it matches GoInt on every platform.
+GoInt = ctypes.c_ssize_t
+
+# square takes and returns a GoInt, which is wider than the C int that
+# ctypes assumes by default, so we must set argtypes and restype to avoid
+# truncation on 64 bit hosts
+Go.square.argtypes = [GoInt]
+Go.square.restype = GoInt
 s = Go.square(x)
 print("Running square({}) returned: {}".format(x, s))
 
@@ -58,9 +64,10 @@ c = Go.conCat(a, b)
 print("Running conCat({}, {}) returned: {}".format(a.value.decode('utf-8'), b.value.decode('utf-8'), goString(c)))
 
 # We can define structures
-# GoString is struct { const char *p; ptrdiff_t n; } so n must be 64 bit
+# GoString is struct { const char *p; ptrdiff_t n; }; n is pointer-sized
+# too, so it also uses GoInt
 class GoString(ctypes.Structure):
-	_fields_ = [("p", ctypes.c_char_p), ("n",  ctypes.c_ssize_t)]
+	_fields_ = [("p", ctypes.c_char_p), ("n",  GoInt)]
 
 Go.toUpper.argtypes = [GoString]
 Go.toUpper.restype = ctypes.c_void_p
@@ -72,7 +79,7 @@ print("Running toUpper({}) returned: {}".format(str.p.decode('utf-8'), goString(
 class toString_return(ctypes.Structure):
 	_fields_ = [("s", ctypes.c_void_p), ("n",  ctypes.c_void_p)]
 
-Go.toString.argtypes = [ctypes.c_longlong]
+Go.toString.argtypes = [GoInt]
 Go.toString.restype = toString_return
 
 s = Go.toString(x)

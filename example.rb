@@ -21,11 +21,14 @@ end
 module Go
 	extend FFI::Library
 	ffi_lib './go2c.so'
+	# GoInt is Go's pointer-sized int (see go2c.h): :long_long on 64 bit
+	# hosts, :int on 32 bit ones, so we must not hardcode :long_long here.
+	GOINT = FFI::Platform::ADDRESS_SIZE == 64 ? :long_long : :int
 	# define class String to map the exported C type
-	# for Go strings: struct { const char *p; GoInt n; }
+	# for Go strings: struct { const char *p; ptrdiff_t n; }
 	class String < FFI::Struct
 		layout	:p,     :pointer,
-				:len,   :long_long
+				:len,   GOINT
 
 		def self.value
 			return self.val
@@ -46,14 +49,14 @@ module Go
 		end
 	end
 	# Returned char* are mapped to :pointer so we can free() them ourselves,
-	# square and toString use :long_long to match GoInt (64 bit).
+	# square and toString use GOINT to match GoInt.
 	attach_function :add, [:int, :int], :int
-	attach_function :square, [:long_long], :long_long
+	attach_function :square, [GOINT], GOINT
 	attach_function :printBits, [:int], :void
 	attach_function :toBits, [:int], :pointer
 	attach_function :conCat, [:string, :string], :pointer
 	attach_function :toUpper, [String.value], :pointer
-	attach_function :toString, [:long_long], StringReturn.value
+	attach_function :toString, [GOINT], StringReturn.value
 	attach_function :getBuf, [], :pointer
 	attach_function :showBuf, [], :void
 	attach_function :releaseBuf, [], :void
